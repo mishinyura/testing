@@ -1,5 +1,5 @@
 import pytest
-from hw3.booking import (
+from ..booking import (
     calc_price,
     check_availability,
     apply_promo_code,
@@ -32,7 +32,7 @@ def test_calc_price_negative(base, discount, count):
     (5, 5, True),
 ])
 def test_check_availability_enough(mocker, available, requested, expected):
-    mocker.patch('booking.get_available_seats', return_value=available)
+    mocker.patch('hw3.booking.get_available_seats', return_value=available)
     assert check_availability(1, requested) == expected
 
 
@@ -41,12 +41,12 @@ def test_check_availability_enough(mocker, available, requested, expected):
     (0, 1),
 ])
 def test_check_availability_not_enough(mocker, available, requested):
-    mocker.patch('booking.get_available_seats', return_value=available)
+    mocker.patch('hw3.booking.get_available_seats', return_value=available)
     assert not check_availability(1, requested)
 
 
 def test_check_availability_invalid_seats(mocker):
-    mocker.patch('booking.get_available_seats', return_value=10)
+    mocker.patch('hw3.booking.get_available_seats', return_value=10)
     with pytest.raises(ValueError):
         check_availability(1, 0)
     with pytest.raises(ValueError):
@@ -59,8 +59,8 @@ def test_check_availability_invalid_seats(mocker):
     (False, False, False),
 ])
 def test_apply_promo_code(mocker, is_valid, is_limit, expected):
-    mocker.patch('booking.is_promo_valid', return_value=is_valid)
-    mocker.patch('booking.is_promo_limit_reached', return_value=is_limit)
+    mocker.patch('hw3.booking.is_promo_valid', return_value=is_valid)
+    mocker.patch('hw3.booking.is_promo_limit_reached', return_value=is_limit)
     assert apply_promo_code(123, 'TESTCODE') == expected
 
 
