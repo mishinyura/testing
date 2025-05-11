@@ -1,5 +1,5 @@
 import pytest
-from ..booking import (
+from hw3.booking import (
     calc_price,
     check_availability,
     apply_promo_code,
