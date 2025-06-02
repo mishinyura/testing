@@ -24,8 +24,9 @@ class TestPriceWithTax:
 
     @pytest.mark.parametrize("negative", [-1.0, -100])
     def test_negative_raises(self, negative):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as exc:
             price_with_tax(negative)
+        assert "net must be non‑negative" in str(exc.value)
     
     def test_negative_raises(self):
         with pytest.raises(ValueError) as exc:
@@ -49,6 +50,16 @@ class TestApplyCoupon:
     def test_newuser5_coupon(self):
         assert apply_coupon(100, "NEWUSER5") == 95.0
         assert apply_coupon(100, "newuser5") == 95.0
+    
+    def test_blackfriday_coupon(self):
+        assert apply_coupon(100, "BLACKFRIDAY") == 75.0
+        assert apply_coupon(100, "blackfriday") == 75.0
+    
+    def test_none_coupon(self):
+        assert apply_coupon(100, None) == 100.0
+
+    def test_empty_string_coupon(self):
+        assert apply_coupon(100, "") == 100.0
 
 
 class TestComputeSubtotal:
@@ -78,6 +89,12 @@ class TestComputeTotal:
         t1 = compute_total(10, 2, "SPORT10")
         t2 = compute_total(10, 2, None)
         assert t1 < t2
+    
+    def test_gross_includes_fee(self):
+        assert compute_total(10, 2) == 25.41
+
+    def test_with_coupon(self):
+        assert compute_total(10, 2, "SPORT10") == 22.87
 
 
 class TestValidateCoupon:
@@ -112,8 +129,9 @@ class TestConvertCurrency:
         assert convert_currency(100, "EUR") == 100.0
 
     def test_unknown_currency(self):
-        with pytest.raises(KeyError):
+        with pytest.raises(KeyError) as exc:
             convert_currency(100, "JPY")
+        assert "Unsupported currency" in str(exc.value)
     
     def test_convert_currency_usd(self):
         assert convert_currency(92, "USD") == 100.0
