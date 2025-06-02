@@ -12,5 +12,15 @@
 - TestValidateTaxNumber.test_valid
 - TestRoundMoney.test_one_decimal
 
+В тест TestApplyLoyaltyDiscount добавил:
+- Позитивный кейс
+- Кейс, когда discount больше gross
+- Кейс, когда points = 0
+- Кейс с нулевой ценой
+
 # Структура
 Внес правки в Makefile, добавил путь к команде ```mutmut run --paths-to-mutate=billing```
+
+# Результат
+Coverage: 86%
+Mutation Score

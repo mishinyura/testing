@@ -181,6 +181,18 @@ class TestApplyLoyaltyDiscount:
 
     def test_cap_at_zero(self):
         assert apply_loyalty_discount(0.5, 100) == 0.0
+    
+    def test_apply_loyalty_discount_usual(self):
+        assert apply_loyalty_discount(10.0, 100) == 9.0
+
+    def test_apply_loyalty_discount_never_negative(self):
+        assert apply_loyalty_discount(0.5, 100) == 0.0
+    
+    def test_apply_loyalty_discount_zero_points(self):
+        assert apply_loyalty_discount(10.0, 0) == 10.0
+    
+    def test_apply_loyalty_discount_zero_gross(self):
+        assert apply_loyalty_discount(0.0, 100) == 0.0
 
 
 class TestCapPrice:
