@@ -26,6 +26,11 @@ class TestPriceWithTax:
     def test_negative_raises(self, negative):
         with pytest.raises(ValueError):
             price_with_tax(negative)
+    
+    def test_negative_raises(self):
+        with pytest.raises(ValueError) as exc:
+            price_with_tax(-10)
+        assert "net must be non‑negative" in str(exc.value)
 
 
 class TestApplyCoupon:
@@ -40,6 +45,10 @@ class TestApplyCoupon:
 
     def test_case_insensitive(self):
         assert apply_coupon(100, "sport10") == 90.0
+    
+    def test_newuser5_coupon(self):
+        assert apply_coupon(100, "NEWUSER5") == 95.0
+        assert apply_coupon(100, "newuser5") == 95.0
 
 
 class TestComputeSubtotal:
@@ -105,6 +114,10 @@ class TestConvertCurrency:
     def test_unknown_currency(self):
         with pytest.raises(KeyError):
             convert_currency(100, "JPY")
+    
+    def test_convert_currency_usd(self):
+        assert convert_currency(92, "USD") == 100.0
+        assert convert_currency(9.2, "USD") == 10.0
 
 
 class TestParseIsoDate:
@@ -212,11 +225,29 @@ class TestRoundMoney:
         assert round_money(1.25, 1) == 1.3
         assert round_money(1.24, 1) == 1.2
         assert round_money(1.28, 1) == 1.3
+    
+    def test_round_down(self):
+        assert round_money(1.234) == 1.23
+
+    def test_round_up(self):
+        assert round_money(1.235) == 1.24
+
+    def test_round_one_decimal_down(self):
+        assert round_money(1.24, 1) == 1.2
+
+    def test_round_one_decimal_up(self):
+        assert round_money(1.25, 1) == 1.3
+
+    def test_zero(self):
+        assert round_money(0.0) == 0.0
 
 
 class TestIsWeekendRate:
-    def test_weekend(self):
-        assert is_weekend_rate(datetime(2024, 6, 8))  # Saturday
-
     def test_weekday(self):
-        assert not is_weekend_rate(datetime(2024, 6, 6))  # Thursday
+        assert not is_weekend_rate(datetime(2024, 6, 6))
+
+    def test_saturday(self):
+        assert is_weekend_rate(datetime(2024, 6, 8))
+
+    def test_sunday(self):
+        assert is_weekend_rate(datetime(2024, 6, 9))
